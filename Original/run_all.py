@@ -17,12 +17,13 @@ def process_tasks(file_path):
         runtimes = []
         solved_count = 0
 
-        for _ in range(1):  # Run the method 10 times
+        for i in range(10):  # Run the method 10 times
+            print(f"{task_name} try {i}")
             solved, runtime = SeqMan(task_name, object_list, "random", True, True, True)
             if solved:
                 solved_count += 1
                 runtimes.append(runtime)
-        
+            print(f"{task_name} try {i} runtime {runtime}")
         if runtimes:
             mean_runtime = statistics.mean(runtimes)
             std_dev_runtime = statistics.stdev(runtimes) if len(runtimes) > 1 else 0.0
@@ -40,7 +41,7 @@ def process_tasks(file_path):
     
     # Create a DataFrame
     df = pd.DataFrame(results_data)
-    df.to_csv("run_output_Rand_FPR.csv", sep=" ", index=False)
+    df.to_csv("run_output_Rand_PR.csv", sep=" ", index=False)
 
 # Example usage
 process_tasks('SeqMan-main/Orig/input.txt')

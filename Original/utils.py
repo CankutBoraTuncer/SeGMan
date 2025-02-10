@@ -155,7 +155,7 @@ def solve(x:Node, view:bool=False):                                          # S
     p = x.path[:]
     ln = x.layer_no
 
-    for i in range(10):
+    for i in range(3):
         S = ry.Skeleton()
         S.enableAccumulatedCollisions(True)
 
@@ -169,24 +169,31 @@ def solve(x:Node, view:bool=False):                                          # S
             S.addEntry([last_state, last_state + 1], ry.SY.touch, [agent, obj])
             S.addEntry([last_state, last_state + 1], ry.SY.stable, [agent, obj])
             last_state += 1
-        S.addEntry([last_state, -1], ry.SY.above, [obj, "sub-goal1"])
-        #S.addEntry([-1], ry.SY.stableOn, [obj, "sub-goal1"])
-        S.addEntry([-1], ry.SY.poseEq, [obj, "sub-goal1"])
+        S.addEntry([last_state, -1], ry.SY.above, [obj, "goal"])
+        S.addEntry([last_state, -1], ry.SY.stableOn,["goal", obj])
+        #S.addEntry([last_state, -1], ry.SY.poseEq, [obj, "sub-goal1"])
     
-        komo = S.getKomo_path(config, 2, 1e0, 1e1, 1e-2, 1e2)
+        komo = S.getKomo_path(config, 30, 1e0, 1e-1, 0, 1e2)
         
-        ret = ry.NLP_Solver(komo.nlp(), verbose=0).solve()              # Solve
+        #komo.addObjective([-1], ry.FS.poseDiff, [obj, "goal"], ry.OT.sos, scale = 1e1 * np.array([1, 1, 0]))
+        for j in range (4):
+
+            ret = ry.NLP_Solver(komo.nlp(), verbose=0).solve()              # Solve
+            if ret.feasible:
+                #print(f"found in {j}")
+                break
         
         if view:   
             komo.view_play(True, str(ret.feasible), 0.3)
 
         if ret.feasible:
-            #komo.view_play(True, "Found", 0.3)
-            komo = S.getKomo_path(config, 30, 1e1, 1e0, 1e-1, 1e2)
+            # #komo.view_play(True, "Found", 0.3)
+            
+            # komo = S.getKomo_path(config, 10, 1e0, 1e-1, 0, 1e1)
+            
+            # ret = ry.NLP_Solver(komo.nlp(), verbose=0).solve() 
 
-            ret = ry.NLP_Solver(komo.nlp(), verbose=0).solve() 
-
-            if ret.feasible:
+            # if ret.feasible:
 
                 komo_path = komo.getPathFrames()
                 p.append(komo_path)
@@ -195,16 +202,6 @@ def solve(x:Node, view:bool=False):                                          # S
             #komo.view_play(True, "Here not true", 0.3)
 
     return Node(config, Node.main_goal, path=p, layer_no=ln, score=x.score), ret.feasible
-    
-
-def sample_points_around_object(C, agent, obj, num_points):
-    center = C.frame(obj).getPosition()[:2]
-    objSize = C.frame(obj).getSize()
-    agentSize = C.frame(agent).getSize()
-    inner_radius = objSize[0] / 2
-    outer_radius = objSize[0] / 2 + agentSize[0] / 2 + 0.5
-    # Randomly generate points in a cube first
-    points = np.random.uniform(-1, 1, size=(num_points, 2))
     
 
 def sub_solve(x:Node, view:bool=False, max_iter:int=10):                                          # Solve the task from the current configuration x to the end goal g
@@ -218,38 +215,25 @@ def sub_solve(x:Node, view:bool=False, max_iter:int=10):                        
     ln = x.layer_no
     komo_path = []
     iter = 0
-    qHome = config.getJointState()
-    #qC =  C.getJointState()
-    pairs = sample_points_around_object(config, agent, obj, max_iter * 2)
-    pairs = np.insert(pairs, 0, qHome, 0)
-    #print(pairs)
-    for i, j in pairs:
-        if iter > max_iter:
-            break
-        Ctemp = ry.Config()
-        Ctemp.addConfigurationCopy(config)
 
-        config_col = ry.Config()
-        config_col.addConfigurationCopy(config)
-        komo_path = []
-        #x, y = sample_random_point(Ctemp) 
-        config_col.setJointState([i,j])
-        col = config_col.getCollisionsTotalPenetration()
-        if col > 0:
-            continue
+    S = ry.Skeleton()
+    S.enableAccumulatedCollisions(True)
 
-        Ctemp.setJointState([i,j])
-        # go to object
-        komo = ry.KOMO(Ctemp, 2, 1, 1, True)
-        komo.addControlObjective([], 0, 1e-2)
-        komo.addControlObjective([], 1, 1e-1)
-        komo.addObjective([], ry.FS.accumulatedCollisions, [], ry.OT.eq, scale=[1e2])
-        komo.addModeSwitch([1.,2], ry.SY.stable, [agent, obj], True)
-        komo.addObjective([1, 2], ry.FS.negDistance, [agent, obj], ry.OT.eq, [1e2])
-        komo.addObjective([2], ry.FS.aboveBox, [obj, "sub-goal1"], ry.OT.sos, [1e2])
-        #komo.initRandom() 
-        solver = ry.NLP_Solver(komo.nlp(), verbose=0 )        # Solve
-        ret = solver.solve() 
+    S.addEntry([1, 2], ry.SY.touch, [agent, obj])
+    S.addEntry([1, 2], ry.SY.stable, [agent, obj])
+    last_state = 2
+    S.addEntry([last_state, -1], ry.SY.above, [obj, "sub-goal1"])
+    #S.addEntry([last_state, -1], ry.SY.stableOn, ["sub-goal1", obj])
+    #S.addEntry([last_state, -1], ry.SY.poseEq, [obj, "sub-goal1"])
+    
+    for i in range(10):
+        
+        komo = S.getKomo_path(config, 1, 0,0, 0, 1e2)
+        
+        if i > 0:
+            komo.initRandom()
+        
+        ret = ry.NLP_Solver(komo.nlp(), verbose=0).solve()              # Solve
 
         if view :#and ret.feasible:    
             komo.view_play(True, str(ret.feasible), 0.3)
@@ -257,8 +241,10 @@ def sub_solve(x:Node, view:bool=False, max_iter:int=10):                        
 
 
         #print("Pick-Place feas: ", ret.feasible)
-        if ret.feasible: 
+        if ret.feasible:
+            
             path = komo.getPath()
+            #print(path) 
 
             q0 = config.getJointState()
             qT = path[0]
@@ -340,7 +326,7 @@ def propose_subgoals(x:Node, o:str, method:str="random", n:int=100, max_iter:int
     config       = ry.Config()
     config.addConfigurationCopy(x.C)
 
-    grid_resolution = 0.05
+    grid_resolution = 0.2
     
     Z            = {}
     goal_height = x.og[2]
@@ -354,11 +340,11 @@ def propose_subgoals(x:Node, o:str, method:str="random", n:int=100, max_iter:int
 
         obj_height = config.getFrame(o).getPosition()[2]
         max_x, max_y = config.frame("floor").getSize()[0:2]
-        pairs = sample_random_points(n *filter_coeff * 3, max_x/2, max_y/2, resolution=grid_resolution) 
+        pairs = sample_random_points(n *filter_coeff, max_x/2, max_y/2, resolution=grid_resolution) 
 
     elif(method == "bottleneck"):
         
-        pairs = propose_bottlenecks(config, o, grid_resolution=grid_resolution, n = filter_coeff * n * 3)
+        pairs = propose_bottlenecks(config, o, grid_resolution=grid_resolution, n = filter_coeff * n)
     
     for px, py in pairs:
             if len(Z) > filter_coeff * n - 1:
@@ -451,7 +437,6 @@ def rej(L: list, xf: ry.Config, O: list, threshold: float = 0.3):
 
 def trace_back(x:Node, C0:ry.Config):                                             # Trace back the solution to the root node
     path = x.path
-    
     for i, p in enumerate(path):
 
         for pi in p:
@@ -459,10 +444,3 @@ def trace_back(x:Node, C0:ry.Config):                                           
             C0.view(False, f"View {i}")
             time.sleep(0.05) 
          
-        
-
-
-
-
-
-        
