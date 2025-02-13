@@ -140,7 +140,9 @@ class SeGMan():
                     return False, None
                 
                 self.OP = self.weight_collision_pairs(self.obstacle_pair_path)
-
+                if len(self.OP) <= 0:
+                    return False, None
+                    
                 tac_pair = time.time()
                 pair_gen_time += tac_pair-tic_base
                 print("Time for pair generation: ", pair_gen_time)
@@ -225,6 +227,9 @@ class SeGMan():
         # Extract keys and values
         path_names = list(pair_path.keys())
         path_values = list(pair_path.values())
+
+        if len(path_names) == 0:
+            return None
 
         # Compute pairwise DTW distances
         n = len(path_values)
@@ -780,7 +785,7 @@ class SeGMan():
                     print(f"Trying Move KOMO for {k+1} time")
 
                 Ct.addFrame("subgoal", "world", "shape: marker, size: [0.1]").setPosition([*wp, 0.2])
-                komo = ry.KOMO(Ct, phases=2, slicesPerPhase=30, kOrder=2, enableCollisions=True)   
+                komo = ry.KOMO(Ct, phases=2, slicesPerPhase=60, kOrder=2, enableCollisions=True)   
                 komo.addControlObjective([], 1, 1e-1)
                 komo.addControlObjective([], 2, 1e-1)
                 komo.addObjective([], ry.FS.accumulatedCollisions, [], ry.OT.eq, scale=1e2)                                                                                        # Randomize the initial configuration
@@ -924,7 +929,7 @@ class SeGMan():
 # -------------------------------------------------------------------------------------------------------------- #
 # -------------------------------------------------------------------------------------------------------------- #
 
-    def display_solution(self, FS:list=None, pause:float=0.05):
+    def display_solution(self, FS:list=None, pause:float=0.05, isPathView:bool=True):
         Ct = ry.Config()
         Ct.addConfigurationCopy(self.C)
 
@@ -932,8 +937,27 @@ class SeGMan():
             FS = self.FS
 
         Ct.view(True, "Solution")
-        for fs in FS:
-            Ct.setFrameState(fs)
+        for i, fs in enumerate(FS):
+            Ct2 = ry.Config()
+            Ct2.addConfigurationCopy(self.C)
+            Ct2.setFrameState(fs)
+
+            if isPathView:
+                if i % 5 == 0:
+                    agent_size = Ct2.frame(self.agent).getSize()
+                    obj_size = Ct2.frame(self.obj).getSize()
+                    Ct.addFrame(self.agent+"_"+str(i), "world", "shape:ssCylinder, size: [" + str(agent_size[0]) + " " + str(agent_size[1]) + " 0.1], color:[1 1 0 0.3]").setPosition(Ct2.frame(self.agent).getPosition())
+                    Ct.addFrame(self.obj+"_"+str(i), "world", "shape:ssBox, size: [" + str(obj_size[0]) + " " + str(obj_size[1]) + " 0.15 0.02], color:[0 0 1 0.3]").setPosition(Ct2.frame(self.obj).getPosition())
+                    for o in self.obs_list:
+                        o_size = Ct2.frame(o).getSize()
+                        Ct.addFrame(o+"_"+str(i), "world", "shape:ssBox, size: [" + str(o_size[0]) + " " + str(o_size[1]) + " 0.12 0.02], color:[1 1 1 0.3]").setPosition(Ct2.frame(o).getPosition())
+                            
+            Ct.frame(self.agent).setPosition(Ct2.frame(self.agent).getPosition())
+            Ct.frame(self.obj).setPosition(Ct2.frame(self.obj).getPosition())
+            for o in self.obs_list:
+                Ct.frame(o).setPosition(Ct2.frame(o).getPosition())
+
+
             Ct.view(False, "Solution")
             time.sleep(pause)
         Ct.view(True, "Solution")
