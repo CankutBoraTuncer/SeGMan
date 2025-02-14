@@ -4,6 +4,10 @@ sys.path.append('..')
 from src.SeGMan import SeGMan
 import time
 
+
+
+#ry.params_add({"Render/useShadow":False})
+
 if __name__ == "__main__":
     C = ry.Config()
     C.addFile("../src/config/p1-two-blocks/p1-two-blocks.g")
