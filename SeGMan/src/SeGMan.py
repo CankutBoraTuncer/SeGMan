@@ -142,7 +142,7 @@ class SeGMan():
                 self.OP = self.weight_collision_pairs(self.obstacle_pair_path)
                 if len(self.OP) <= 0:
                     return False, None
-                    
+
                 tac_pair = time.time()
                 pair_gen_time += tac_pair-tic_base
                 print("Time for pair generation: ", pair_gen_time)
@@ -311,6 +311,25 @@ class SeGMan():
             )
             plt.title("Directed Path Similarity Graph")
             plt.show()
+
+        if self.verbose > 2:
+            Ct = ry.Config()
+            Ct.addConfigurationCopy(self.C)
+            
+            for cluster in clusters:
+                r = np.random.uniform(0,1)
+                g = np.random.uniform(0,1)
+                b = np.random.uniform(0,1)
+                
+                for name in cluster: 
+                    weight = 1
+                    for i, n in enumerate(weighted_obstacle_pairs):
+                        if tuple(n.objects) == name:
+                            weight = 2/(i+1)
+                    path = pair_path[name]
+                    for i, p in enumerate(path):
+                        Ct.addFrame(str(name) + "_" + str(i), "world", "shape: sphere, size: [0.05], color: [" + str(r) + " " + str(g) + " " + str(b) + " " + str(weight) + "]").setPosition([*p, 0.2])
+            Ct.view(True, "Clustered Paths")
 
         if self.verbose > 0:
             # Output Pair objects
@@ -553,7 +572,7 @@ class SeGMan():
                 new_node.multiplier = multiplier
                 #if o == "obj2":
                 #    self.verbose = 2
-
+                
                 self.node_score(new_node)
                 
                 generated_nodes.append(new_node)
@@ -623,9 +642,9 @@ class SeGMan():
 
             f = False
             if type == 0:
-                f, path = self.run_rrt(Ct, obj_goal, [], self.verbose, N=1, step_size=0.05)
+                f, path = self.run_rrt(Ct, obj_goal, [], self.verbose, N=1, step_size=0.03)
             elif type == 1:
-                f, path = self.run_rrt(Ct, self.goal, [], self.verbose, N=1, step_size=0.05)
+                f, path = self.run_rrt(Ct, self.goal, [], self.verbose, N=1, step_size=0.03)
             
             if f:
                 self.obstacle_pair_path[tuple(op)] = np.round(path, 2)
@@ -785,7 +804,7 @@ class SeGMan():
                     print(f"Trying Move KOMO for {k+1} time")
 
                 Ct.addFrame("subgoal", "world", "shape: marker, size: [0.1]").setPosition([*wp, 0.2])
-                komo = ry.KOMO(Ct, phases=2, slicesPerPhase=60, kOrder=2, enableCollisions=True)   
+                komo = ry.KOMO(Ct, phases=2, slicesPerPhase=50, kOrder=2, enableCollisions=True)   
                 komo.addControlObjective([], 1, 1e-1)
                 komo.addControlObjective([], 2, 1e-1)
                 komo.addObjective([], ry.FS.accumulatedCollisions, [], ry.OT.eq, scale=1e2)                                                                                        # Randomize the initial configuration
@@ -937,20 +956,22 @@ class SeGMan():
             FS = self.FS
 
         Ct.view(True, "Solution")
+        fl = len(FS)
         for i, fs in enumerate(FS):
             Ct2 = ry.Config()
             Ct2.addConfigurationCopy(self.C)
             Ct2.setFrameState(fs)
 
             if isPathView:
-                if i % 5 == 0:
+                if i % 20 == 0:
+                    sat = 0.5
                     agent_size = Ct2.frame(self.agent).getSize()
                     obj_size = Ct2.frame(self.obj).getSize()
-                    Ct.addFrame(self.agent+"_"+str(i), "world", "shape:ssCylinder, size: [" + str(agent_size[0]) + " " + str(agent_size[1]) + " 0.1], color:[1 1 0 0.3]").setPosition(Ct2.frame(self.agent).getPosition())
-                    Ct.addFrame(self.obj+"_"+str(i), "world", "shape:ssBox, size: [" + str(obj_size[0]) + " " + str(obj_size[1]) + " 0.15 0.02], color:[0 0 1 0.3]").setPosition(Ct2.frame(self.obj).getPosition())
+                    Ct.addFrame(self.agent+"_"+str(i), "world", "shape:ssCylinder, size: [" + str(agent_size[0]) + " " + str(agent_size[1]) + " 0.1], color:[1 1 0 "+str(sat) +"]").setPosition(Ct2.frame(self.agent).getPosition())
+                    Ct.addFrame(self.obj+"_"+str(i), "world", "shape:ssBox, size: [" + str(obj_size[0]) + " " + str(obj_size[1]) + " 0.15 0.02], color:[0 0 1 "+str(sat) +"]").setPosition(Ct2.frame(self.obj).getPosition())
                     for o in self.obs_list:
                         o_size = Ct2.frame(o).getSize()
-                        Ct.addFrame(o+"_"+str(i), "world", "shape:ssBox, size: [" + str(o_size[0]) + " " + str(o_size[1]) + " 0.12 0.02], color:[1 1 1 0.3]").setPosition(Ct2.frame(o).getPosition())
+                        Ct.addFrame(o+"_"+str(i), "world", "shape:ssBox, size: [" + str(o_size[0]) + " " + str(o_size[1]) + " 0.12 0.02], color:[1 1 1 "+str(sat) +"]").setPosition(Ct2.frame(o).getPosition())
                             
             Ct.frame(self.agent).setPosition(Ct2.frame(self.agent).getPosition())
             Ct.frame(self.obj).setPosition(Ct2.frame(self.obj).getPosition())

@@ -22,11 +22,10 @@ block_9_8 (floor) 	{  Q:[1.4, 1, 0.2, -1, 0, 0, 0], shape:ssBox, size:[0.4, 0.4,
 #---------------------------------------------------------------------------------------------------#
 
 egoJoint (world) 	{  Q:[-0.5, -0.5, 0.1, 1, 0, 0, 0] }
-ego (egoJoint) 	{  Q:[-0.5, 0.7, 0, -1, 0, 0, 0], joint:transXY, limits:[-10, 10, -10, 10], shape:ssCylinder, size:[0.2, 0.2, 0.02], color:[1 1 1], contact:1, logical:{ gripper }, sampleUniform:1 }
 #---------------------------------------------------------------------------------------------------#
 
 objJoint (world) 	{  Q:[0, 0, 0.1, -1, 0, 0, 0] }
-obj (objJoint) 	{  Q:[-0.6, -1, 0, -1, 0, 0, 0], joint:rigid, shape:ssBox, size:[0.2, 0.2, 0.2, 0.02], color:[1 1 1], contact:1, mass:100, inertia:[0 0 0], logical:{ object } }
+obj (objJoint) 	{  Q:[-0.65, -1, 0, -1, 0, 0, 0], joint:rigid, shape:ssBox, size:[0.2, 0.2, 0.2, 0.02], color:[1 1 1], contact:1, mass:100, inertia:[0 0 0], logical:{ object } }
 
 #---------------------------------------------------------------------------------------------------#
 
