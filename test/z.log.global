@@ -1,0 +1,30 @@
+** compiled at:     Nov 26 2024 16:46:14
+** execution start: 2025-03-04 13:09:04:440191
+graph.cpp:initParameters:1512(3) opening config file 'rai.cfg'
+graph.cpp:initParameters:1519(3)  - failed
+graph.cpp:initParameters:1525(3) opening base config file '/root/local/rai/../local.cfg'
+graph.cpp:initParameters:1531(3)  - failed
+util.cpp:cd_start:1034(3) entering path '/home/bora/Desktop/Bilkent_MS/SeqMan/SeGMan/test'
+util.cpp:cd_file:1042(3) entering path '../src/config/wall-hard' from '/home/bora/Desktop/Bilkent_MS/SeqMan/SeGMan/test'
+util.cpp:getIs:1071(3) opening input file 'wall-hard.g'
+util.cpp:cd_start:1034(3) entering path '/home/bora/Desktop/Bilkent_MS/SeqMan/SeGMan/src/config/wall-hard'
+util.cpp:cd_file:1042(3) entering path '..' from '/home/bora/Desktop/Bilkent_MS/SeqMan/SeGMan/src/config/wall-hard'
+util.cpp:getIs:1071(3) opening input file 'base-walls-min.g'
+util.cpp:cd_start:1034(3) entering path '/home/bora/Desktop/Bilkent_MS/SeqMan/SeGMan/src/config/wall-hard'
+util.cpp:cd_start:1034(3) entering path '/home/bora/Desktop/Bilkent_MS/SeqMan/SeGMan/test'
+util.cpp:cd_start:1034(3) entering path '/home/bora/Desktop/Bilkent_MS/SeqMan/SeGMan/test'
+util.cpp:cd_file:1042(3) entering path '../src/config/wall-hard' from '/home/bora/Desktop/Bilkent_MS/SeqMan/SeGMan/test'
+util.cpp:getIs:1071(3) opening input file 'wall-hard-heatmap.g'
+util.cpp:cd_start:1034(3) entering path '/home/bora/Desktop/Bilkent_MS/SeqMan/SeGMan/src/config/wall-hard'
+util.cpp:cd_file:1042(3) entering path '..' from '/home/bora/Desktop/Bilkent_MS/SeqMan/SeGMan/src/config/wall-hard'
+util.cpp:getIs:1071(3) opening input file 'base-walls-min-heatmap.g'
+util.cpp:cd_start:1034(3) entering path '/home/bora/Desktop/Bilkent_MS/SeqMan/SeGMan/src/config/wall-hard'
+util.cpp:cd_start:1034(3) entering path '/home/bora/Desktop/Bilkent_MS/SeqMan/SeGMan/test'
+RRT_PathFinder.cpp:RRT_PathFinder:256(0) initializing with infeasible qT:
+RRT_PathFinder.cpp:RRT_PathFinder:255(0) initializing with infeasible q0:
+RRT_PathFinder.cpp:RRT_PathFinder:255(0) initializing with infeasible q0:
+RRT_PathFinder.cpp:RRT_PathFinder:256(0) initializing with infeasible qT:
+RRT_PathFinder.cpp:RRT_PathFinder:255(0) initializing with infeasible q0:
+RRT_PathFinder.cpp:RRT_PathFinder:256(0) initializing with infeasible qT:
+RRT_PathFinder.cpp:RRT_PathFinder:255(0) initializing with infeasible q0:
+RRT_PathFinder.cpp:RRT_PathFinder:255(0) initializing with infeasible q0:
