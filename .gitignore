@@ -1,0 +1,95 @@
+# General files
+*.log
+*.tmp
+*.bak
+*.swp
+*.DS_Store
+*.sublime-workspace
+*.sublime-project
+Thumbs.db
+
+# Rai
+*.komoData
+*.komoReport.plt
+*.log.global
+*.plotcmd
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+ENV/
+VENV/
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+*.iml
+target/
+
+# C/C++
+*.o
+*.obj
+*.so
+*.a
+*.out
+*.dSYM/
+*.exe
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.code-workspace
+*.vscode/*
+*.workspace
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.user
+*.cproj
+*.vcxproj
+*.vcxproj.filters
+
+# Other tools
+dist/
+build/
+*.lock
+*.pid
+*.seed
+*.pid.lock
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# Environment files
+.env
+.env.*
